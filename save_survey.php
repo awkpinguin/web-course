@@ -14,7 +14,7 @@ if ($identifier === null || $identifier === "")
 else
 {
     $arr = str_split('identifier');
-    if (!ctype_alpha($arr[0]))
+    if (is_numeric($arr[0]))
         echo "NO, идентификатор должен начинаться с буквы";
     else
     {
