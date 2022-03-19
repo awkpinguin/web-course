@@ -1,10 +1,15 @@
 <?php
 
-$name = $_GET['name'] ?? null;
-
-if ($name === null)
+function getRequestParameter(string $key): ?string
 {
-    echo 'Hello Anonymus!';
+    return $_GET[$key] ?? null;
+}
+
+$name = getRequestParameter('name');
+
+if ($name === null || $name === "")
+{
+    echo 'Hello Anonymous!';
 }
 else
 {
