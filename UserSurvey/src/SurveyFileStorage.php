@@ -1,40 +1,76 @@
 <?php
 class SurveyFileStorage
 {
-    public function getFile($arguments)
+    private const BASE = './data/';
+    private const EXTENSION = '.txt';
+
+    public function saveSurvey(Survey $survey): void
     {
-        if ($arguments[2] === "")
-        {
-            echo "В ключе email не указано значение.";
-        }
-        else
-        {
-            $fileName = "./data/" . $arguments[2] . ".txt";
+        $email = $survey->getEmail();
 
-            if (file_exists($fileName))
+        if ($email !== '')
+        {
+            $fileName = self::BASE . $email . self::EXTENSION;
+            $prevSurvey = $this->getSurvey($survey);
+            $text = $this->makeStringForFile($survey, $prevSurvey);
+            file_put_contents($fileName, $text);
+        }
+    }
+
+    public function getSurvey(Survey $survey): Survey
+    {
+        $fileName = self::BASE . $survey->getEmail() . self::EXTENSION;
+
+        if  (file_exists($fileName))
+        {
+            $marker = fopen($fileName, 'r');
+            if ($marker)
             {
-                $infoFile = file($fileName);
-                if ($arguments[0] === null || $arguments[0] === "")
-                {
-                    $arguments[0] = trim(substr($infoFile[0], strpos($infoFile[0], ':') + 1));
-                }
-                if ($arguments[1] === null || $arguments[1] === "")
-                {
-                    $arguments[1] = trim(substr($infoFile[1], strpos($infoFile[1], ':') + 1));
-                }
-                if ($arguments[3] === null || $arguments[3] === "")
-                {
-                    $arguments[3] = trim(substr($infoFile[3], strpos($infoFile[3], ':') + 1));
-                }
+                $text = $this->readStringFromFile($marker);
+                fclose($marker);
+                $array = $this->splitStringToArray($text);
+                return new Survey($array['First name'], $array['Last name'], $array['Email'], $array['Age']);
             }
-            $infoStr = "First Name: " . $arguments[0] . PHP_EOL;
-            $infoStr = $infoStr . "Last Name: " . $arguments[1] . PHP_EOL;
-            $infoStr = $infoStr . "Email: " . $arguments[2] . PHP_EOL;
-            $infoStr = $infoStr . "Age: " . $arguments[3];
-
-            file_put_contents($fileName, $infoStr);
-
-            return true;
         }
+
+        return new Survey();
+    }
+
+    private function makeStringForFile(Survey $survey, Survey $prevSurvey): string
+    {
+        $prepString = '';
+        $values = [
+            'First name' => $survey->getFirstName() !== '' ? $survey->getFirstName() : $prevSurvey->getFirstName(),
+            'Last name' => $survey->getLastName() !== '' ? $survey->getLastName() : $prevSurvey->getLastName(),
+            'Age' => $survey->getAge() !== '' ? $survey->getAge() : $prevSurvey->getAge(),
+            'Email' => $survey->getEmail() !== '' ? $survey->getEmail() : $prevSurvey->getEmail(),
+        ];
+        foreach (array_keys($values) as $key)
+        {
+            $prepString .= $key . ': ' . $values[$key] . '&';
+        }
+        return $prepString;
+    }
+
+    private function readStringFromFile($marker): string
+    {
+        $text = '';
+        while ($buffer = fgets($marker))
+        {
+            $text .= str_replace('\n', '', $buffer) . '&';
+        }
+        return substr($text, 0, -1);
+    }
+
+    private function splitStringToArray(string $text): array
+    {
+        $arr = explode('&', $text);
+        $parsedArr = [];
+        foreach ($arr as $value)
+        {
+            $pair = explode(': ', $value);
+            $parsedArr[$pair[0]] = $pair[1];
+        }
+        return $parsedArr;
     }
 }

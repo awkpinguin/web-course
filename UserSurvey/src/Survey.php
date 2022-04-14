@@ -1,33 +1,12 @@
 <?php
-/*class Survey
-{
-    private array $arguments;
-    private string $parameter;
-
-    public function __construct(string $firstName = "", string $lastName = "", string $email = "", string $age = "")
-    {
-        $this->arguments = [
-            "First name"=>$firstName,
-            "Last name"=>$lastName,
-            "Email"=>$email,
-            "Age"=>$age,
-        ];
-    }
-
-    public function getArguments(string $parameter) : ?string
-    {
-        return $this->arguments[$parameter];
-    }
-}*/
 class Survey
 {
     private string $firstName;
     private string $lastName;
     private string $email;
     private string $age;
-    private array $arguments;
 
-    public function __construct(string $firstName, string $lastName, string $email, string $age)
+    function __construct(string $firstName = '', string $lastName = '', string $email = '', string $age = '')
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -35,9 +14,24 @@ class Survey
         $this->age = $age;
     }
 
-    public function getArguments()
+    public function getFirstName(): string
     {
-        return $this->arguments = [$this->firstName, $this->lastName, $this->email, $this->age];
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getAge(): string
+    {
+        return $this->age;
     }
 }
 

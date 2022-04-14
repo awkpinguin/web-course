@@ -1,12 +1,12 @@
 <?php
 class SurveyPrinter
 {
-    function printArguments($arguments)
+    public static function printSurvey(Survey $survey): void
     {
-        $infoStr = "First name: " . $arguments[0] . "<br/>";
-        $infoStr = $infoStr . 'Last name: ' . $arguments[1] . "<br/>";
-        $infoStr = $infoStr . 'Email: ' . $arguments[2] . "<br/>";
-        $infoStr = $infoStr . 'Age: ' . $arguments[3] . "<br/>";
+        $infoStr = 'First name: ' . $survey->getFirstName() . '<br/>';
+        $infoStr = $infoStr . 'Last name: ' . $survey->getLastName() . '<br/>';
+        $infoStr = $infoStr . 'Email: ' . $survey->getEmail() . '<br/>';
+        $infoStr = $infoStr . 'Age: ' . $survey->getAge() . '<br/>';
         echo $infoStr;
     }
 }
